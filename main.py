@@ -51,6 +51,9 @@ bt = ICBacktester(df)
 ic = bt.compute_ic(alpha)
 rank_ic = bt.compute_rank_ic(alpha)
 
-print("Expression:", expr)
-print("IC Summary:", bt.summary(ic))
-print("Rank IC Summary:", bt.summary(rank_ic))
+print("IC Interpretation:", bt.interpret_ic(ic))
+print("Rank IC Interpretation:", bt.interpret_ic(rank_ic))
+
+pnl = bt.long_short_pnl(alpha)
+print("Avg Long-Short Return:", pnl.mean())
+print("Sharpe (annualized):", pnl.mean() / pnl.std() * (252 ** 0.5))
