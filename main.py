@@ -1,8 +1,12 @@
 import pandas as pd
+from dotenv import load_dotenv
 
 from data_ingestion import fetch_ohlcv
 from backtester import ICBacktester
 from parser import AlphaExpressionParser
+from generate_alpha import generate_alpha_expression
+
+load_dotenv()
 
 # -------------------------------
 # Step 1: Fetch data
@@ -38,7 +42,8 @@ variables = {
 # -------------------------------
 # Step 3: Parse LLM-style formula
 # -------------------------------
-expr = "Sub(Delta(xLog(close), 5), Mean(close, 20))"
+expr = generate_alpha_expression()
+print("Generated alpha:", expr)
 
 parser = AlphaExpressionParser(variables)
 alpha = parser.parse(expr)
@@ -56,4 +61,4 @@ print("Rank IC Interpretation:", bt.interpret_ic(rank_ic))
 
 pnl = bt.long_short_pnl(alpha)
 print("Avg Long-Short Return:", pnl.mean())
-print("Sharpe (annualized):", pnl.mean() / pnl.std() * (252 ** 0.5))
+print("Sharpe (annualized):", pnl.mean() / pnl.std() * (252**0.5))
