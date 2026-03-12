@@ -14,9 +14,7 @@ class ICBacktester:
 
         self.df.set_index(["date", "ticker"], inplace=True)
 
-    # -------------------------
     # IC Metrics
-    # -------------------------
     def compute_ic(self, alpha):
         data = pd.concat([alpha, self.df["fwd_ret_20"]], axis=1)
         data.columns = ["alpha", "ret"]
@@ -59,9 +57,7 @@ class ICBacktester:
             "Signal Strength": strength,
         }
 
-    # -------------------------
     # Simple Long-Short Backtest
-    # -------------------------
     def long_short_pnl(self, alpha, quantile=0.2):
         """
         Long top quantile, short bottom quantile

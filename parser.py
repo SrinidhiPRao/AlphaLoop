@@ -63,7 +63,7 @@ class AlphaExpressionParser(ast.NodeVisitor):
             return node.value
         raise ValueError("Only numeric constants allowed")
 
-    def visit_Num(self, node):  # Python <3.8
+    def visit_Num(self, node):  
         return node.n
 
     def generic_visit(self, node):
