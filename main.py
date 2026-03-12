@@ -10,19 +10,62 @@ load_dotenv()
 
 # Step 1: Fetch data
 NSE_TICKERS = [
-    "RELIANCE.NS",
-    "TCS.NS",
-    "INFY.NS",
-    "HDFCBANK.NS",
-    "ICICIBANK.NS",
-    "SBIN.NS",
-    "LT.NS",
-    "ITC.NS",
+    "ADANIENT.NS",
+    "ADANIPORTS.NS",
+    "APOLLOHOSP.NS",
+    "ASIANPAINT.NS",
     "AXISBANK.NS",
+    "BAJAJ-AUTO.NS",
+    "BAJFINANCE.NS",
+    "BAJAJFINSV.NS",
+    "BEL.NS",
+    "BHARTIARTL.NS",
+    "BPCL.NS",
+    "BRITANNIA.NS",
+    "CIPLA.NS",
+    "COALINDIA.NS",
+    "DRREDDY.NS",
+    "EICHERMOT.NS",
+    "ETERNAL.NS",
+    "GRASIM.NS",
+    "HCLTECH.NS",
+    "HDFCBANK.NS",
+    "HDFCLIFE.NS",
+    "HEROMOTOCO.NS",
+    "HINDALCO.NS",
+    "HINDUNILVR.NS",
+    "ICICIBANK.NS",
+    "INDIGO.NS",
+    "INDUSINDBK.NS",
+    "INFY.NS",
+    "ITC.NS",
+    "JIOFIN.NS",
+    "JSWSTEEL.NS",
     "KOTAKBANK.NS",
+    "LT.NS",
+    "M&M.NS",
+    "MARUTI.NS",
+    "MAXHEALTH.NS",
+    "NESTLEIND.NS",
+    "NTPC.NS",
+    "ONGC.NS",
+    "POWERGRID.NS",
+    "RELIANCE.NS",
+    "SBILIFE.NS",
+    "SBIN.NS",
+    "SHRIRAMFIN.NS",
+    "SUNPHARMA.NS",
+    "TATACONSUM.NS",
+    "TATASTEEL.NS",
+    "TCS.NS",
+    "TECHM.NS",
+    "TITAN.NS",
+    "TRENT.NS",
+    "ULTRACEMCO.NS",
+    "WIPRO.NS",
 ]
 
-df = fetch_ohlcv(tickers=NSE_TICKERS, start="2022-01-01", save=True)
+df = fetch_ohlcv(tickers=NSE_TICKERS, start="2023-01-01", save=True)
 
 # Step 2: Prepare panel
 df_panel = df.set_index(["date", "ticker"]).sort_index()
@@ -56,8 +99,6 @@ for _ in range(3):
     print("Avg Long-Short Return:", pnl.mean())
     print("Sharpe (annualized):", pnl.mean() / pnl.std() * (252**0.5))
 
-    with open("results.csv", "a+") as f:
-        f.write(f"expr, {ic}, {rank_ic}")
     """How to interpret IC:
     IC Mean	Interpretation
     ~0.00	Noise

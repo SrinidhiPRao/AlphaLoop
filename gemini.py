@@ -2,7 +2,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 def get_gemini_llm(
-    model: str = "gemini-2.5-flash-lite",
+    model: str = "gemini-2.5-flash",
     temperature: float = 0.2,
 ):
     """
