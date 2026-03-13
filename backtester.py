@@ -69,23 +69,3 @@ class ICBacktester:
             "ICIR": icir,
             "Signal Strength": strength,
         }
-
-    # --- Simple Long-Short Backtest ---
-    def long_short_pnl(self, alpha: pd.Series, quantile=0.2) -> pd.Series:
-        """
-        Long top quantile, short bottom quantile.
-        Neutralization applied before portfolio construction.
-        """
-        alpha_neutralized = self.neutralize(alpha)
-        data = pd.concat([alpha_neutralized, self.df["fwd_ret_20"]], axis=1)
-        data.columns = ["alpha", "ret"]
-        data = data.dropna()
-
-        def daily_pnl(x):
-            q = x["alpha"].quantile(quantile)
-            q_inv = x["alpha"].quantile(1 - quantile)
-            long = x[x["alpha"] >= q_inv]["ret"].mean()
-            short = x[x["alpha"] <= q]["ret"].mean()
-            return long - short
-
-        return data.groupby(level="date").apply(daily_pnl)
