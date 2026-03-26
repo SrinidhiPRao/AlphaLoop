@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Detail — ARS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <nav class="nav">
+    <div class="nav-logo">ARS<span>/</span>NSE</div>
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/leaderboard.html" class="nav-link">Leaderboard</a>
+    <div class="nav-status">
+      <div class="nav-pulse"></div><span>live</span>
+    </div>
+  </nav>
+  <main class="page">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+      <h1 id="stock-title"
+        style="font-family:var(--font-mono);font-size:28px;font-weight:700;letter-spacing:0.06em;color:var(--text);">—
+      </h1>
+      <span id="stock-dir-badge"></span>
+      <div style="margin-left:auto;">
+        <div class="horizon-selector">
+          <button class="horizon-btn" data-h="1W">1W</button>
+          <button class="horizon-btn active" data-h="1M">1M</button>
+          <button class="horizon-btn" data-h="3M">3M</button>
+        </div>
+      </div>
+    </div>
+    <div class="stat-row" id="stock-stats" style="margin-bottom:20px;">
+      <div class="stat skeleton" style="height:62px;width:140px;"></div>
+      <div class="stat skeleton" style="height:62px;width:140px;"></div>
+      <div class="stat skeleton" style="height:62px;width:140px;"></div>
+      <div class="stat skeleton" style="height:62px;width:140px;"></div>
+    </div>
+    <div class="card" id="price-chart-wrap" style="padding:28px;">
+      <div class="skeleton" style="height:120px;border-radius:4px;"></div>
+    </div>
+  </main>
+  <script src="/js/stock.js"></script>
+</body>
+
+</html>

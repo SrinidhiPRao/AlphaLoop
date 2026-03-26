@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alpha Leaderboard — ARS</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">ARS<span>/</span>NSE</div>
+  <a href="/" class="nav-link">Dashboard</a>
+  <a href="/leaderboard.html" class="nav-link active">Leaderboard</a>
+  <div class="nav-status">
+    <div class="nav-pulse"></div>
+    <span id="last-updated">live</span>
+  </div>
+</nav>
+
+<main class="page">
+
+  <div style="margin-bottom:24px;">
+    <h1 style="font-family:var(--font-mono);font-size:18px;font-weight:700;letter-spacing:0.06em;color:var(--text);margin-bottom:4px;">
+      Alpha Leaderboard
+    </h1>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);">
+      Top 10 alpha formulas ranked by IC Mean — updated continuously by the research engine
+    </p>
+  </div>
+
+  <div class="card">
+    <table class="lb-table" id="lb-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Formula</th>
+          <th>IC Mean</th>
+          <th>Sharpe</th>
+          <th>Max DD</th>
+          <th>Found</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body">
+        <tr>
+          <td colspan="6">
+            <div class="skeleton" style="height:40px;border-radius:4px;margin:4px 0;"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="card-title" style="margin-bottom:6px;">Alpha Formula</div>
+        <div id="modal-formula" class="formula-text" style="max-width:none;white-space:normal;font-size:13px;color:var(--accent);"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="stat-row" id="modal-stats" style="margin-bottom:20px;"></div>
+    <div style="position:relative;height:220px;">
+      <canvas id="modal-chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="/js/leaderboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alpha Research System</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">ARS<span>/</span>NSE</div>
+  <a href="/" class="nav-link active">Dashboard</a>
+  <a href="/leaderboard.html" class="nav-link">Leaderboard</a>
+  <div class="nav-status">
+    <div class="nav-pulse"></div>
+    <span id="last-updated">—</span>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- Top bar: metrics + horizon -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <div class="stat-row" id="metrics-row">
+      <div class="stat skeleton" style="height:62px;width:130px;"></div>
+      <div class="stat skeleton" style="height:62px;width:130px;"></div>
+      <div class="stat skeleton" style="height:62px;width:130px;"></div>
+      <div class="stat skeleton" style="height:62px;width:130px;"></div>
+    </div>
+    <div class="horizon-selector">
+      <button class="horizon-btn" data-h="1W">1W</button>
+      <button class="horizon-btn active" data-h="1M">1M</button>
+      <button class="horizon-btn" data-h="3M">3M</button>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div style="display:grid; grid-template-columns:380px 1fr; gap:16px; align-items:start;">
+
+    <!-- Left: Portfolio -->
+    <div class="card" style="position:sticky; top:68px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <div class="card-title" style="margin-bottom:0;">Portfolio — <span id="n-stocks">—</span> positions</div>
+        <span id="portfolio-horizon" style="font-family:var(--font-mono);font-size:10px;color:var(--accent);">1M horizon</span>
+      </div>
+      <div id="portfolio-list">
+        <div class="skeleton" style="height:44px;margin-bottom:4px;border-radius:4px;"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:4px;border-radius:4px;"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:4px;border-radius:4px;"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:4px;border-radius:4px;"></div>
+        <div class="skeleton" style="height:44px;border-radius:4px;"></div>
+      </div>
+    </div>
+
+    <!-- Right: Charts -->
+    <div style="display:flex; flex-direction:column; gap:16px;">
+
+      <!-- Equity curve -->
+      <div class="card">
+        <div class="card-title">Equity Curve — vs Nifty 50</div>
+        <div style="position:relative; height:240px;">
+          <canvas id="equity-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Heatmap -->
+      <div class="card">
+        <div class="card-title">Signal Heatmap — All Nifty 50</div>
+        <div class="heatmap-grid" id="heatmap-grid">
+          <!-- populated by JS -->
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:14px;">
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);">SHORT</span>
+          <div style="flex:1;height:4px;border-radius:2px;background:linear-gradient(to right,#ff3d71,#1e2a35,#00e676);"></div>
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);">LONG</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script src="/js/dashboard.js"></script>
+</body>
+</html>
