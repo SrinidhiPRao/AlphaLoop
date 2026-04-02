@@ -223,11 +223,11 @@ def run_once(df, df_panel, variables):
     con = sqlite3.connect(DB_PATH)
     bt = ICBacktester(df)
 
-    # 1. Load existing leaderboard formulas from DB
+    # load existing leaderboard formulas from DB
     existing_exprs = load_leaderboard_exprs(con)
     log.info("Existing leaderboard: %d formulas", len(existing_exprs))
 
-    # 2. Run RL to generate 5 fresh candidates
+    # run RL to generate 5 fresh candidates
     log.info("Running RL loop for new candidates …")
     results = run_rl_loop(
         variables=variables,
@@ -240,20 +240,20 @@ def run_once(df, df_panel, variables):
     new_exprs = [expr for expr, _ in results.leaderboard]
     log.info("RL produced %d new candidates", len(new_exprs))
 
-    # 3. Merge and deduplicate (existing first to preserve order on ties)
+    # merge
     all_candidates = list(dict.fromkeys(existing_exprs + new_exprs))
     log.info("Re-evaluating all %d candidates with current data …", len(all_candidates))
 
-    # 4. Re-evaluate everything with fresh data — metrics are always current
+    # re-evaluate
     scored = evaluate_all(all_candidates, variables, df)
 
-    # 5. Keep top 10
+    # find top 10
     top10 = scored[:10]
     best_expr = top10[0][0]
     best_ic = top10[0][1]
     log.info("Best IC: %.4f  expr: %s", best_ic, best_expr)
 
-    # 6. Persist
+    # write to db
     write_leaderboard(con, top10)
     write_portfolio(con, best_expr, variables, df)
     write_equity_curve(con, best_expr, variables, df)
@@ -263,9 +263,6 @@ def run_once(df, df_panel, variables):
 
     con.close()
     log.info("Run complete.")
-
-
-# ── Entry point ───────────────────────────────────────────────────────────────
 
 
 def main():
@@ -289,7 +286,7 @@ def main():
         except Exception as e:
             log.error("Run failed: %s", e, exc_info=True)
         log.info("Sleeping 5 minutes …")
-        time.sleep(10)
+        time.sleep(300)
 
 
 if __name__ == "__main__":

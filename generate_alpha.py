@@ -19,3 +19,4 @@ def generate_alpha_expression() -> str:
     expr = response.content.strip()
 
     return expr
+    return "Sub(Add(close, 0.5), 0.5)"
