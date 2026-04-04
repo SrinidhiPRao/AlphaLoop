@@ -31,11 +31,10 @@ function renderTable(rows) {
     tr.style.animationDelay = `${i * 0.05}s`;
     tr.innerHTML = `
       <td>${rankBadge(r.rank)}</td>
-      <td><div class="formula-text" title="${r.formula}">${r.formula}</div></td>
-      <td style="color:var(--accent-2);font-weight:700;">${r.ic_mean}</td>
-      <td style="color:var(--accent);">${r.sharpe}</td>
-      <td style="color:var(--short);">${r.max_drawdown}%</td>
-      <td style="color:var(--text-dim);">${r.found_at}</td>
+      <td><div class="formula-text" style="max-width:none;white-space:normal;overflow:visible;text-overflow:unset;">${r.formula}</div></td>
+      <td style="color:var(--accent-2);font-weight:700;">${(+r.ic_mean).toFixed(1)}</td>
+      <td style="color:var(--accent);">${(+r.sharpe).toFixed(1)}</td>
+      <td style="color:var(--short);">${(+r.max_drawdown).toFixed(1)}%</td>
     `;
     tr.addEventListener('click', () => openModal(r));
     tbody.appendChild(tr);
@@ -137,7 +136,7 @@ function renderModalChart(seed) {
 
 // Simple seedable PRNG
 function mulberry32(a) {
-  return function() {
+  return function () {
     let t = a += 0x6D2B79F5;
     t = Math.imul(t ^ t >>> 15, t | 1);
     t ^= t + Math.imul(t ^ t >>> 7, t | 61);
