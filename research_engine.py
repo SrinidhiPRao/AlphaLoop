@@ -13,7 +13,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-
+import pandas as pd
 from dotenv import load_dotenv
 
 from data import NSE_TICKERS, alphas
@@ -189,11 +189,34 @@ def write_equity_curve(con, best_expr, variables, df):
     metrics = sw_bt.run(alpha, plot=False)
 
     nav_series = metrics.get("nav")
-    bench_series = metrics.get("benchmark")
-
     if nav_series is None:
         log.warning("No nav series returned — skipping equity curve write")
         return
+    nav_series = (nav_series / nav_series.iloc[0]) * 100
+
+    # Fetch Nifty 50 benchmark aligned to nav date range
+    start_date = nav_series.index.min().strftime("%Y-%m-%d")
+    bench_series = None
+    try:
+        nifty_df = fetch_ohlcv(["^NSEI"], start=start_date, save=False)
+        nifty_df["date"] = pd.to_datetime(nifty_df["date"]).dt.tz_localize(None)
+        nifty_close = nifty_df.set_index("date")["close"].sort_index()
+
+        # Align to nav index, forward-fill any missing dates (holidays)
+        nav_index = (
+            nav_series.index.tz_localize(None)
+            if hasattr(nav_series.index, "tz") and nav_series.index.tz
+            else nav_series.index
+        )
+        nifty_aligned = nifty_close.reindex(nav_index, method="ffill")
+
+        # Normalize to 100 at first available point
+        first_valid = nifty_aligned.first_valid_index()
+        if first_valid is not None:
+            bench_series = (nifty_aligned / nifty_aligned[first_valid]) * 100
+            log.info("Benchmark fetched — %d rows", bench_series.notna().sum())
+    except Exception as e:
+        log.warning("Benchmark fetch failed: %s — chart will show alpha only", e)
 
     dates = nav_series.index.astype(str).tolist()
     navs = nav_series.tolist()
