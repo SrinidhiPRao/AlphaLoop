@@ -90,7 +90,7 @@ def get_performance():
     ).fetchall()
 
     lb = con.execute(
-        "SELECT ic_mean, sharpe, max_drawdown, total_return FROM leaderboard WHERE rank = 1"
+        "SELECT ic_mean, sharpe, max_drawdown FROM leaderboard WHERE rank = 1"
     ).fetchone()
 
     con.close()
@@ -102,8 +102,10 @@ def get_performance():
     nav = [r["nav"] for r in curve]
     bench = [r["benchmark"] for r in curve]
 
+    total_return = round(nav[-1] - nav[0], 2) if nav else 0
+
     metrics = {
-        "total_return": round(lb["total_return"], 2) if lb else 0,
+        "total_return": total_return,
         "sharpe": round(lb["sharpe"], 3) if lb else 0,
         "max_drawdown": round(lb["max_drawdown"], 2) if lb else 0,
         "ic_mean": round(lb["ic_mean"], 4) if lb else 0,
@@ -164,7 +166,6 @@ def get_stock(ticker: str, horizon: str = "1M"):
 
 # ── Static files ──────────────────────────────────────────────────────────────
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
-
 
 if __name__ == "__main__":
     from uvicorn import run

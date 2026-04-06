@@ -43,7 +43,6 @@ def init_db():
         ic_mean      REAL,
         sharpe       REAL,
         max_drawdown REAL,
-        total_return REAL,
         found_at     TEXT
     );
     CREATE TABLE IF NOT EXISTS portfolio (
@@ -84,7 +83,7 @@ def load_leaderboard_exprs(con):
 def evaluate_all(candidates, variables, df):
     """
     Re-evaluate every candidate with fresh market data.
-    Returns list of (expr, ic_mean, sharpe, max_drawdown, total_return)
+    Returns list of (expr, ic_mean, sharpe, max_drawdown)
     sorted by ic_mean descending. Failures are skipped with a warning.
     """
     bt = ICBacktester(df)
@@ -99,8 +98,7 @@ def evaluate_all(candidates, variables, df):
             metrics = sw_bt.run(alpha, plot=False)
             sharpe = float(metrics.get("sharpe", 0))
             max_dd = float(metrics.get("max_drawdown", 0))
-            total_ret = float(metrics.get("total_return", 0))
-            scored.append((expr, ic_mean, sharpe, max_dd, total_ret))
+            scored.append((expr, ic_mean, sharpe, max_dd))
             log.info("  eval %-55s  IC=%.4f  Sharpe=%.3f", expr[:55], ic_mean, sharpe)
         except Exception as e:
             log.warning("  eval failed for %s: %s", expr[:55], e)
@@ -113,16 +111,14 @@ def evaluate_all(candidates, variables, df):
 
 
 def write_leaderboard(con, scored_top10):
-    """scored_top10: list of (expr, ic_mean, sharpe, max_dd, total_ret)"""
+    """scored_top10: list of (expr, ic_mean, sharpe, max_dd)"""
     con.execute("DELETE FROM leaderboard")
-    for rank, (expr, ic_mean, sharpe, max_dd, total_ret) in enumerate(
-        scored_top10, start=1
-    ):
+    for rank, (expr, ic_mean, sharpe, max_dd) in enumerate(scored_top10, start=1):
         con.execute(
             """
             INSERT OR REPLACE INTO leaderboard
-                (rank, formula, ic_mean, sharpe, max_drawdown, total_return, found_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+                (rank, formula, ic_mean, sharpe, max_drawdown, found_at)
+            VALUES (?, ?, ?, ?, ?, ?)
         """,
             (
                 rank,
@@ -130,7 +126,6 @@ def write_leaderboard(con, scored_top10):
                 ic_mean,
                 sharpe,
                 max_dd,
-                total_ret,
                 datetime.now(timezone.utc).isoformat(),
             ),
         )
