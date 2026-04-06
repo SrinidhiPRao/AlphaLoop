@@ -164,3 +164,9 @@ def get_stock(ticker: str, horizon: str = "1M"):
 
 # ── Static files ──────────────────────────────────────────────────────────────
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+
+if __name__ == "__main__":
+    from uvicorn import run
+
+    run(app=app)
