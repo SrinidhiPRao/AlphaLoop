@@ -95,7 +95,7 @@ def evaluate_all(candidates, variables, df):
         try:
             alpha = parser.parse(expr)
             ic_mean = float(bt.interpret_ic(bt.compute_ic(alpha))["IC Mean"])
-            metrics = sw_bt.run(alpha, plot=False)
+            metrics = sw_bt.run(alpha)
             sharpe = float(metrics.get("sharpe", 0))
             max_dd = float(metrics.get("max_drawdown", 0))
             scored.append((expr, ic_mean, sharpe, max_dd))
@@ -181,7 +181,7 @@ def write_equity_curve(con, best_expr, variables, df):
     sw_bt = SignalWeightedBacktester(df)
     parser = AlphaExpressionParser(variables)
     alpha = parser.parse(best_expr)
-    metrics = sw_bt.run(alpha, plot=False)
+    metrics = sw_bt.run(alpha)
 
     nav_series = metrics.get("nav")
     if nav_series is None:

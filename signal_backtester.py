@@ -54,7 +54,7 @@ class SignalWeightedBacktester:
 
         return alpha_neutralized.groupby(level="date").transform(_normalize)
 
-    def run(self, alpha: pd.Series, plot: bool = True) -> dict:
+    def run(self, alpha: pd.Series) -> dict:
         """
         Run the signal-weighted backtest.
 
@@ -69,6 +69,7 @@ class SignalWeightedBacktester:
         """
         alpha_neutralized = self.neutralize(alpha)
         weights = self._compute_weights(alpha_neutralized)
+        # weights = self._compute_weights(alpha)
 
         data = pd.concat([weights, self.df["fwd_ret_1"]], axis=1)
         data.columns = ["weight", "ret"]
@@ -99,107 +100,4 @@ class SignalWeightedBacktester:
             "nav": nav,
             "daily_returns": daily_returns,
         }
-
-        if plot:
-            self._plot_equity_curve(nav, daily_returns, metrics)
-
         return metrics
-
-    def _plot_equity_curve(
-        self, nav: pd.Series, daily_returns: pd.Series, metrics: dict
-    ):
-        fig, (ax1, ax2) = plt.subplots(
-            2,
-            1,
-            figsize=(12, 7),
-            gridspec_kw={"height_ratios": [3, 1]},
-            facecolor="#0d1117",
-        )
-        fig.patch.set_facecolor("#0d1117")
-
-        # --- NAV curve ---
-        ax1.set_facecolor("#0d1117")
-        ax1.plot(nav.index, nav.values, color="#00d4aa", linewidth=1.5, zorder=3)
-        ax1.fill_between(
-            nav.index,
-            1,
-            nav.values,
-            where=(nav.values >= 1),
-            color="#00d4aa",
-            alpha=0.08,
-        )
-        ax1.fill_between(
-            nav.index,
-            1,
-            nav.values,
-            where=(nav.values < 1),
-            color="#ff4d6d",
-            alpha=0.12,
-        )
-        ax1.axhline(1.0, color="#444c56", linewidth=0.8, linestyle="--")
-
-        # Annotate total return
-        final_nav = nav.iloc[-1]
-        color = "#00d4aa" if final_nav >= 1 else "#ff4d6d"
-        ax1.annotate(
-            f"{(final_nav - 1) * 100:+.1f}%",
-            xy=(nav.index[-1], final_nav),
-            xytext=(-60, 10),
-            textcoords="offset points",
-            fontsize=11,
-            color=color,
-            fontweight="bold",
-        )
-
-        ax1.set_ylabel("Portfolio NAV", color="#8b949e", fontsize=10)
-        ax1.tick_params(colors="#8b949e", labelsize=9)
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
-        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-        for spine in ax1.spines.values():
-            spine.set_edgecolor("#30363d")
-        ax1.grid(axis="y", color="#21262d", linewidth=0.6)
-
-        # Stats box
-        stats_text = (
-            f"Sharpe  {metrics['sharpe']:+.2f}    "
-            f"MaxDD  {metrics['max_drawdown'] * 100:.1f}%    "
-            f"Return  {metrics['total_return'] * 100:+.1f}%"
-        )
-        ax1.set_title(
-            "Signal-Weighted Portfolio  ·  " + stats_text,
-            color="#e6edf3",
-            fontsize=11,
-            pad=12,
-            loc="left",
-            fontfamily="monospace",
-        )
-
-        # --- Daily returns bar chart ---
-        ax2.set_facecolor("#0d1117")
-        colors = ["#00d4aa" if r >= 0 else "#ff4d6d" for r in daily_returns.values]
-        ax2.bar(
-            daily_returns.index,
-            daily_returns.values,
-            color=colors,
-            width=1.0,
-            alpha=0.7,
-        )
-        ax2.axhline(0, color="#444c56", linewidth=0.6)
-        ax2.set_ylabel("Daily Ret", color="#8b949e", fontsize=9)
-        ax2.tick_params(colors="#8b949e", labelsize=8)
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
-        ax2.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-        for spine in ax2.spines.values():
-            spine.set_edgecolor("#30363d")
-        ax2.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y*100:.1f}%"))
-        ax2.grid(axis="y", color="#21262d", linewidth=0.6)
-
-        plt.tight_layout(h_pad=0.5)
-        plt.show()
-
-    def print_metrics(self, metrics: dict):
-        print("\n=== Signal-Weighted Backtest Results ===")
-        print(f"  Total Return  : {metrics['total_return'] * 100:+.2f}%")
-        print(f"  Sharpe Ratio  : {metrics['sharpe']:.3f}")
-        print(f"  Max Drawdown  : {metrics['max_drawdown'] * 100:.2f}%")
-        print("========================================\n")
